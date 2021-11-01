@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        .box {
+            display: inline-block;
+            width: 25%;
+            text-align: center;
+            border: 1px solid;
+        }
+
+        #url {
+            width: 80%;
+        }
+
+        h1 {
+            font-size: 32px;
+        }
+
+        input,
+        p {
+            font-size: 18px;
+        }
+
+        div>p {
+            width: 50%;
+            float: left;
+        }
+
+        textarea {
+            width: 100%;
+        }
+    </style>
+
+    <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://unpkg.com/sheetrock@1.2.0/dist/sheetrock.min.js"></script>
+</head>
+
+<body>
+    <h1>讀取 Google 試算表</h1>
+
+    <p>試算表連結：<input type="text" id="url" /></p>
+    <p>
+        範例連結：https://docs.google.com/spreadsheets/d/1xbw4IgLmiKWBLF9NA25PdlnqkzzRIRVMZj8avIT8mxI/edit#gid=0
+    </p>
+    <input type="button" id="readSheet" value="開始讀取" onclick="connectSheet();" />
+
+    <div>
+        <p>
+        <table id="Data"></table>
+        </p>
+        <p>
+            欄位標題：<br /><textarea id="errorMessage" name="errorMessage" rows="30"></textarea>
+        </p>
+        <p>
+            讀取資料：<br /><textarea id="jsonData" name="jsonData" rows="30"></textarea>
+        </p>
+    </div>
+    <p>轉換成表格：</p>
+    <table id="statistics" class="table table-condensed table-striped"></table>
+
+    <script>
+        function id(_id) {
+            return document.getElementById(_id);
+        }
+
+        function connectSheet() {
+            var mySpreadsheet = document.getElementById("url").value;
+            $("#statistics").sheetrock({
+                url: mySpreadsheet,
+                callback: function (error, options, response) {
+                    console.log(error, options, response);
+                    console.log(response.attributes.labels);
+                    const labels = JSON.stringify(
+                        response.attributes.labels
+                    );
+                    id("errorMessage").value = JSON.stringify(
+                        response.attributes.labels,
+                        null,
+                        2
+                    );
+                    console.log(response.raw);
+                    console.log(JSON.stringify(response.raw));
+                    console.log(response.rows);
+                    console.log(JSON.stringify(response.rows));
+                    const rows = JSON.stringify(response.rows);
+                    id("jsonData").value = JSON.stringify(
+                        response.rows,
+                        null,
+                        2
+                    );
+                },
+            });
+        }
+    </script>
+</body>
+
+</html>
